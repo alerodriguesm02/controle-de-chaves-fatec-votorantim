@@ -1,0 +1,12 @@
+node_modules/
+data/
+.env
+.DS_Store
+test-results/
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.labels
+*.json.gz

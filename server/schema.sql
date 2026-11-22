@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY, max_keys INTEGER NOT NULL, hours INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, registration TEXT NOT NULL UNIQUE, role TEXT NOT NULL, password TEXT NOT NULL, active INTEGER NOT NULL DEFAULT 1, valid_until TEXT NOT NULL DEFAULT '', master INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id), expires TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS rooms (id TEXT PRIMARY KEY, code TEXT NOT NULL UNIQUE, name TEXT NOT NULL, block TEXT NOT NULL, active INTEGER NOT NULL DEFAULT 1);
+CREATE TABLE IF NOT EXISTS keys (id TEXT PRIMARY KEY, code TEXT NOT NULL UNIQUE, hook TEXT NOT NULL, kind TEXT NOT NULL, condition TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS key_rooms (key_id TEXT NOT NULL REFERENCES keys(id), room_id TEXT NOT NULL REFERENCES rooms(id), PRIMARY KEY(key_id,room_id));
+CREATE TABLE IF NOT EXISTS labels (id TEXT PRIMARY KEY, key_id TEXT NOT NULL REFERENCES keys(id), token_hash TEXT NOT NULL UNIQUE, active INTEGER NOT NULL, created TEXT NOT NULL);
+CREATE UNIQUE INDEX IF NOT EXISTS one_label ON labels(key_id) WHERE active=1;
+CREATE TABLE IF NOT EXISTS schedules (id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id), room_id TEXT NOT NULL REFERENCES rooms(id), subject TEXT NOT NULL, class_name TEXT NOT NULL, weekday INTEGER NOT NULL, start_time TEXT NOT NULL, end_time TEXT NOT NULL, valid_from TEXT NOT NULL, valid_to TEXT NOT NULL, batch TEXT NOT NULL DEFAULT '', active INTEGER NOT NULL DEFAULT 1);
+CREATE TABLE IF NOT EXISTS loans (id TEXT PRIMARY KEY, key_id TEXT NOT NULL REFERENCES keys(id), user_id TEXT NOT NULL REFERENCES users(id), checkout TEXT NOT NULL, due TEXT NOT NULL, returned TEXT, actor_out TEXT NOT NULL REFERENCES users(id), actor_in TEXT REFERENCES users(id), reason_out TEXT NOT NULL, reason_in TEXT, declared_out TEXT, declared_in TEXT, context TEXT NOT NULL, rooms TEXT NOT NULL, CHECK(returned IS NULL OR returned>=checkout));
+
+CREATE INDEX IF NOT EXISTS loans_by_owner ON loans(user_id,checkout);
+CREATE TABLE IF NOT EXISTS requests (user_id TEXT NOT NULL REFERENCES users(id), request_key TEXT NOT NULL, fingerprint TEXT NOT NULL, result TEXT NOT NULL, PRIMARY KEY(user_id,request_key));
+CREATE TABLE IF NOT EXISTS audit (id TEXT PRIMARY KEY, at TEXT NOT NULL, actor TEXT, role TEXT, action TEXT NOT NULL, target TEXT NOT NULL, detail TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS incidents (id TEXT PRIMARY KEY, key_id TEXT NOT NULL REFERENCES keys(id), type TEXT NOT NULL, description TEXT NOT NULL, opened TEXT NOT NULL, actor TEXT NOT NULL REFERENCES users(id), closed TEXT, resolution TEXT);
+CREATE TABLE IF NOT EXISTS checks (id TEXT PRIMARY KEY, shift TEXT NOT NULL, at TEXT NOT NULL, actor TEXT NOT NULL REFERENCES users(id), result TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS schedule_exceptions (id TEXT PRIMARY KEY, schedule_id TEXT NOT NULL REFERENCES schedules(id), date TEXT NOT NULL, mode TEXT NOT NULL, teacher_id TEXT REFERENCES users(id), room_id TEXT REFERENCES rooms(id), reason TEXT NOT NULL, UNIQUE(schedule_id,date));
+CREATE TABLE IF NOT EXISTS corrections (id TEXT PRIMARY KEY, loan_id TEXT NOT NULL UNIQUE REFERENCES loans(id), at TEXT NOT NULL, actor_id TEXT NOT NULL REFERENCES users(id), reason TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS app_meta (name TEXT PRIMARY KEY, value TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS loan_context (loan_id TEXT PRIMARY KEY REFERENCES loans(id), schedule_id TEXT REFERENCES schedules(id), origin TEXT NOT NULL, snapshot TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS audit_meta (event_id TEXT PRIMARY KEY REFERENCES audit(id), actor_id TEXT REFERENCES users(id), unit TEXT NOT NULL, request_id TEXT NOT NULL, previous TEXT NOT NULL, current_value TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS label_checks (id TEXT PRIMARY KEY, expected_key TEXT NOT NULL REFERENCES keys(id), label_id TEXT REFERENCES labels(id), actor TEXT NOT NULL REFERENCES users(id), at TEXT NOT NULL, hook TEXT NOT NULL, expected_code TEXT NOT NULL, rooms TEXT NOT NULL, scanned_code TEXT NOT NULL, outcome TEXT NOT NULL, incident_id TEXT REFERENCES incidents(id));
