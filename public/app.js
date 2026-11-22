@@ -238,6 +238,7 @@ function account() {
   );
 }
 document.addEventListener("click", async (e) => {
+  if (e.target.closest(".sidebar a")) document.body.classList.remove("menu-open");
   const n = e.target.closest("[data-action]");
   if (!n || n.disabled) return;
   const a = n.dataset.action,

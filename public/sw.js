@@ -1,4 +1,4 @@
-const version = "chavario-shell-glass-5";
+const version = "chavario-shell-glass-7";
 self.addEventListener("install", (event) =>
   event.waitUntil(
     caches
