@@ -111,4 +111,4 @@ A barra lateral usa um degradê de cinza de #454545 a #272727. Uma cápsula prat
 
 Inventário, histórico, ocorrências, relatórios, cadastros, horários, auditoria e configurações compartilham a hierarquia de títulos do painel, cartões brancos de 22 px de raio e controles de formulário de 12 px de raio. Botões primários e opções selecionadas usam cápsulas escuras. As tabelas mantêm cabeçalho neutro e rolagem horizontal dentro do cartão.
 
-No login, o painel institucional retoma o violeta do resumo. Na identificação da chave, a confirmação da retirada usa o azul do indicador de retiradas e a devolução usa o coral do indicador de devoluções. O título do diálogo identifica a operação também por escrito.
+No login, o painel institucional usa o mesmo degradê cinza da barra lateral. Na identificação da chave, a confirmação da retirada usa o azul do indicador de retiradas e a devolução usa o coral do indicador de devoluções. O título do diálogo identifica a operação também por escrito.

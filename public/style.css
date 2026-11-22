@@ -120,11 +120,14 @@ button svg {
   display: grid;
   grid-template-columns: 223px minmax(0, 1fr);
 }
-.sidebar {
+.sidebar,
+.auth-art {
   background:
     radial-gradient(ellipse 100% 48% at 0% 5%, #ffffff20, transparent),
     radial-gradient(ellipse 95% 38% at 105% 94%, #ffffff0c, transparent),
     linear-gradient(155deg, #454545, #323232 52%, #272727);
+}
+.sidebar {
   border-inline-end: 1px solid #ffffff38;
   box-shadow: inset 1px 0 1px #ffffff24;
   color: #e8eff7;
@@ -1334,7 +1337,6 @@ fieldset {
   background: var(--paper);
 }
 .auth-art {
-  background: var(--navy);
   color: white;
   padding: 42px;
   display: flex;
@@ -1983,7 +1985,6 @@ summary {
     inset 0 0 22px #ffffff70;
   overflow: hidden;
 }
-.auth-art,
 .glass-tile.total {
   color: white;
   background:
